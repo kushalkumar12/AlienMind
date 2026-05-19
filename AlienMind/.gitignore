@@ -1,0 +1,6 @@
+backend/.mvn/apache-maven-*/
+backend/.mvn/*.zip
+backend/target/
+frontend/dist/
+frontend/node_modules/
+*.log
