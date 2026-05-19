@@ -1,0 +1,48 @@
+# livekit-values.yaml - Helm configuration values for deploying LiveKit server in Production Kubernetes
+# Deployment Reference: https://github.com/livekit/livekit-helm
+
+livekit:
+  # The domain name clients will use to connect to LiveKit
+  domain: livekit.alienmind.net
+  port: 7880
+
+  # API key and secret pairings for auth verification
+  keys:
+    devkey: secret
+
+  # Production LiveKit relies on Redis for keeping track of rooms and nodes
+  redis:
+    address: redis-master.alienmind.svc.cluster.local:6379
+    # password: "secure-redis-password"
+
+  # ICE (NAT Traversal) & Built-in TURN server setup
+  rtc:
+    # Use host network to minimize latency and bypass Kubernetes proxy/ingress packet hops.
+    # Essential for production-grade WebRTC packet throughput.
+    useHostNetwork: true
+    
+    # TCP fallback port (TURN over TCP)
+    tcpPort: 7881
+    
+    # Range of UDP ports reserved for WebRTC media streams
+    portRangeStart: 10000
+    portRangeEnd: 20000
+
+  # Embedded STUN/TURN server configuration (coturn replacement)
+  turn:
+    enabled: true
+    domain: turn.livekit.alienmind.net
+    # Public IPs of the kubernetes nodes hosting the LiveKit pods
+    externalIPs:
+      - 34.120.120.10
+    udpPort: 3478
+    tlsPort: 5349
+    # Shared secret for signing short-lived TURN credentials
+    secret: "turn-shared-secret-key-12345"
+
+# Prometheus scraping configuration
+prometheus:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 15s

@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package calling.v1;
+
+option go_package = "github.com/kushalkumar12/alienmind/calling-service/pb/v1;callingv1";
+
+service CallingService {
+  rpc CreateCallSession(CreateCallSessionRequest) returns (CreateCallSessionResponse);
+  rpc EndCallSession(EndCallSessionRequest) returns (EndCallSessionResponse);
+  rpc GetCallSessionStatus(GetCallSessionStatusRequest) returns (GetCallSessionStatusResponse);
+}
+
+message CreateCallSessionRequest {
+  string caller_id = 1;
+  string receiver_id = 2;
+  string call_type = 3; // "AUDIO" or "VIDEO"
+  int32 duration_limit_sec = 4;
+}
+
+message CreateCallSessionResponse {
+  string room_id = 1;
+  string caller_token = 2;
+  string receiver_token = 3;
+  string livekit_url = 4;
+  int64 created_at = 5;
+}
+
+message EndCallSessionRequest {
+  string room_id = 1;
+  string requested_by = 2;
+}
+
+message EndCallSessionResponse {
+  bool success = 1;
+  int64 ended_at = 2;
+}
+
+message GetCallSessionStatusRequest {
+  string room_id = 1;
+}
+
+message GetCallSessionStatusResponse {
+  string room_id = 1;
+  string status = 2; // "PENDING", "ACTIVE", "ENDED"
+  repeated string active_participants = 3;
+  int64 duration_sec = 4;
+}
